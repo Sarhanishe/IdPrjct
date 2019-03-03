@@ -18,7 +18,7 @@ namespace WindowsFormsApp1
 
     public partial class CR : Form
     {
-        double[] forest1 = { 0.7, 0.94, 0.36, 0.52 };
+        double[] forest1 = { 1, 0, 1, 0 };
         double[] city2 = { -25.0088, -23, 3300, 839.4985, 933.3491 };
         double[] river3 = { -2.2365, -1.0706, 29.2263, 65.0149 };
         public CR()
@@ -26,7 +26,7 @@ namespace WindowsFormsApp1
             InitializeComponent();
         }
         //Рекурсия
-        public void Identification(double[,] matr, int k)
+        public void Identification(Color[,] matr, int k)
         {
             int k0, k1, k2, k3;
             int k0c, k1c, k2c, k3c;
@@ -43,7 +43,7 @@ namespace WindowsFormsApp1
             k1 = 4 * s * (k / s) + 2 * (k % s) + 1;
             k2 = 4 * s * (k / s) + 2 * (k % s) + 2 * s;
             k3 = 4 * s * (k / s) + 2 * (k % s) + 2 * s + 1;
-            if (n < 6)
+            if (n < 5)
             {
                 while (n >= 1)
             {
@@ -95,7 +95,7 @@ namespace WindowsFormsApp1
             }
         }
         //Начальная
-        public void Identification(double[,] matr)
+        public void Identification(Color[,] matr)
         {
             int k0, k1, k2, k3;
             int k0c, k1c, k2c, k3c;
@@ -121,7 +121,7 @@ namespace WindowsFormsApp1
             return;
         }
         //поиск коэффициентов образа
-        public double[] Kf(double[,] pix, int k)
+        public double[,] Kf(Color [,] pix, int k)
         {
             
             int p = pix.GetLength(0);
@@ -136,12 +136,26 @@ namespace WindowsFormsApp1
             
             textBox1.Text = n.ToString();
             int s = (int)System.Math.Pow(2, n);
-            double[,] m = new double[p/s, p/s];
+            Color[,] m = new Color[p/s, p/s];
             for (int i = (k / s) * p / s , ii=0; i < ((k / s) + 1) * p / s; i++, ii++)
                 for (int j = (k % s) * p / s , jj=0; j < ((k % s) + 1) * p / s; j++ , jj++)
                     m[ii,jj]= pix[i, j] ;
-            double[] arr = new double[2];
-            var mtr = Matrix<double>.Build.DenseOfArray(m);
+            double[,] arr = new double[3,2];
+            ///////////////////////
+            double[,] R = new double[p / s, p / s];
+            double[,] G = new double[p / s, p / s];
+            double[,] B = new double[p / s, p / s];
+            for (int y = 0; y < p/s; y++)
+                for (int x = 0; x < p/s; x++)
+                {
+                    R[x, y] = m[x, y].R;
+                    G[x, y] = m[x, y].G;
+                    B[x, y] = m[x, y].B;
+
+                }
+
+           //R//
+            var mtr = Matrix<double>.Build.DenseOfArray(R);
             var svd = mtr.Svd(true);//разложение изображения
             double[] sing = new double[pix.GetLength(0)];
             for (int i = 1 ; i <  p / s; i++)
@@ -154,79 +168,111 @@ namespace WindowsFormsApp1
                 sumx1 += i * i;
                 sumxy += i * sing[i];
             }
-            arr[0] = ((sing.Length) * sumxy - (sumx * sumy)) / ((sing.Length) * sumx1 - sumx * sumx);
-            arr[1] = (sumy - arr[0] * sumx) / ((sing.Length));
-            
-            if (k == 61 && n == 5)
+            arr[0,0] = ((sing.Length) * sumxy - (sumx * sumy)) / ((sing.Length) * sumx1 - sumx * sumx);
+            arr[0,1] = (sumy - arr[0,0] * sumx) / ((sing.Length));
+           //G//
+             mtr = Matrix<double>.Build.DenseOfArray(G);
+             svd = mtr.Svd(true);//разложение изображения
+             sing = new double[pix.GetLength(0)];
+            for (int i = 1; i < p / s; i++)
+                sing[i] = svd.W[i, i];
+            sumx = 0; sumx1 = 0; sumy = 0; sumxy = 0;
+            for (int i = 1; i < p / s; i++)
+            {
+                sumx += i;
+                sumy += sing[i];
+                sumx1 += i * i;
+                sumxy += i * sing[i];
+            }
+            arr[1, 0] = ((sing.Length) * sumxy - (sumx * sumy)) / ((sing.Length) * sumx1 - sumx * sumx);
+            arr[1, 1] = (sumy - arr[1, 0] * sumx) / ((sing.Length));
+
+           //B//
+            mtr = Matrix<double>.Build.DenseOfArray(B);
+            svd = mtr.Svd(true);//разложение изображения
+            sing = new double[pix.GetLength(0)];
+            for (int i = 1; i < p / s; i++)
+                sing[i] = svd.W[i, i];
+            sumx = 0; sumx1 = 0; sumy = 0; sumxy = 0;
+            for (int i = 1; i < p / s; i++)
+            {
+                sumx += i;
+                sumy += sing[i];
+                sumx1 += i * i;
+                sumxy += i * sing[i];
+            }
+            arr[2, 0] = ((sing.Length) * sumxy - (sumx * sumy)) / ((sing.Length) * sumx1 - sumx * sumx);
+            arr[2, 1] = (sumy - arr[2, 0] * sumx) / ((sing.Length));
+
+
+
+            if ((n == 5) && (k == 0 || k == 1 || k == 63))
             {
                 using (StreamWriter svdfile = new StreamWriter(@"ftest.txt", append: true))
                 {
-                    // svdfile.Write(i);
-                    svdfile.Write("a0 = ");
-                    svdfile.Write(arr[0]);
-                    svdfile.Write(" b0 = ");
-                    svdfile.Write(arr[1]);
+                   /* // svdfile.Write(i);
+                    svdfile.Write("a0R = ");
+                    svdfile.Write(arr[0,0]);
+                    svdfile.Write(" b0R = ");
+                    svdfile.Write(arr[0,1]);
+                    svdfile.WriteLine();
+
+                    svdfile.Write("a0G = ");
+                    svdfile.Write(arr[1, 0]);
+                    svdfile.Write(" b0G = ");
+                    svdfile.Write(arr[1, 1]);
+                    svdfile.WriteLine();
+
+                    svdfile.Write("a0B = ");
+                    svdfile.Write(arr[2, 0]);
+                    svdfile.Write(" b0B = ");
+                    svdfile.Write(arr[2, 1]);
+                    svdfile.WriteLine();
+
                     svdfile.Write(" n = ");
                     svdfile.Write(p/s);
-                    svdfile.WriteLine();
-                   /* for (int i = 0; i < p ; i++)
-                    {
-                        for (int j = 0; j < p ; j++)
-                        {
-                            svdfile.Write(" ");
-                            svdfile.Write(pix[i, j]);
-                        }
-                        svdfile.WriteLine();
-                    }*/
-                };
-            }
-            if (k == 1 && n == 5)
-            {
-                using (StreamWriter svdfile = new StreamWriter(@"futest.txt", append: true))
-                {
-                    // svdfile.Write(i);
-                    svdfile.Write("a0 = ");
-                    svdfile.Write(arr[0]);
-                    svdfile.Write(" b0 = ");
-                    svdfile.Write(arr[1]);
-                    svdfile.Write(" n = ");
-                    svdfile.Write(p / s);
-                    svdfile.WriteLine();
-                    /* for (int i = 0; i < p ; i++)
-                     {
-                         for (int j = 0; j < p ; j++)
-                         {
-                             svdfile.Write(" ");
-                             svdfile.Write(pix[i, j]);
-                         }
-                         svdfile.WriteLine();
-                     }*/
-                };
-            }
-            if (k == 2 && n == 5)
-            {
-                using (StreamWriter svdfile = new StreamWriter(@"futest.txt", append: true))
-                {
-                    // svdfile.Write(i);
-                    svdfile.Write("a0 = ");
-                    svdfile.Write(arr[0]);
-                    svdfile.Write(" b0 = ");
-                    svdfile.Write(arr[1]);
-                    svdfile.Write(" n = ");
-                    svdfile.Write(p / s);
-                    svdfile.WriteLine();
-                    /* for (int i = 0; i < p ; i++)
-                     {
-                         for (int j = 0; j < p ; j++)
-                         {
-                             svdfile.Write(" ");
-                             svdfile.Write(pix[i, j]);
-                         }
-                         svdfile.WriteLine();
-                     }*/
-                };
-            }
+                    svdfile.WriteLine();*/
+                    Color newColor = Color.FromArgb(0, 0, 0);
+                    int i1 = (k / s) * p / s;
+                    int i2 = ((k / s) + 1) * p / s;
+                    int j1 = (k % s) * p / s;
+                    int j2 = ((k % s) + 1) * p / s;
 
+                    for (int i = (k / s) * p / s; i < ((k / s) + 1) * p / s; i++)
+                        for (int j = (k % s) * p / s; j < ((k % s) + 1) * p / s; j++)
+                            pix[i, j] = newColor;
+                    /* for (int j = (k % s) * p / s; j < ((k % s) + 1) * p / s; j++)
+                     {
+
+                         pix[i1, j] = newColor;
+                         pix[i1 + 1, j] = newColor;
+                     }
+
+                     for (int i = (k / s) * p / s; i < ((k / s) + 1) * p / s; i++)
+                     {
+                         pix[i, j1] = newColor;
+                         pix[i, j2] = newColor;
+                         pix[i, j1 + 1] = newColor;
+                         pix[i, j2 - 1] = newColor;
+                     }
+                     for (int j = (k % s) * p / s; j < ((k % s) + 1) * p / s; j++)
+                     {
+                         pix[i2, j] = newColor;
+                         pix[i1 + 1, j] = newColor;
+                     }*/
+
+                    /* for (int i = 0; i < p ; i++)
+                     {
+                         for (int j = 0; j < p ; j++)
+                         {
+                             svdfile.Write(" ");
+                             svdfile.Write(pix[i, j]);
+                         }
+                         svdfile.WriteLine();
+                     }*/
+                };
+            }
+            
             return arr;
         }
         //Поиск для полного
@@ -254,34 +300,62 @@ namespace WindowsFormsApp1
         }
 
         //Соответствие
-        public int Eq(double[] kf)
+        public int Eq(double[,] kf)
         {
             int n=0;
            /* if (kf[0] == 0 && kf[1] == 0)
                 n = 1;*/
-            if ((kf[0] >= forest1[0]) && (kf[0] <= forest1[1]) && (kf[1] >= forest1[2]) && (kf[1] <= forest1[3]))
+            if ((kf[0,0] >= forest1[0]) && (kf[0,0] <= forest1[1]) && (kf[0,1] >= forest1[2]) && (kf[0,1] <= forest1[3]))
                 n = 1;
-            else if ((kf[0] >= city2[0]) && (kf[0] <= city2[1]) && (kf[1] >= city2[2]) && (kf[1] <= city2[3]))
+            else if ((kf[1,0] >= city2[0]) && (kf[1,0] <= city2[1]) && (kf[1,1] >= city2[2]) && (kf[1,1] <= city2[3]))
                 n=2;
-            else if ((kf[0] >= river3[0]) && (kf[0] <= river3[1]) && (kf[1] >= river3[2]) && (kf[1] <= river3[3]))
+            else if ((kf[2,0] >= river3[0]) && (kf[2,0] <= river3[1]) && (kf[2,1] >= river3[2]) && (kf[2,1] <= river3[3]))
                 n=3;
             return n;
 
         }
         //Закрашивание
-        public void Pnt(double[,] pix, int k,int c)
+        public void Pnt(Color [,] pix, int k,int c)
         {
             int p = pix.GetLength(1);
             int n = 1;
+            Color newColor=Color.FromArgb(0,0,0) ;
             while ((k - System.Math.Pow(4, n)) >= 0)
             {
                 k = k - (int)System.Math.Pow(4, n);
                 n++;
             }
-            int s = (int)System.Math.Pow(2, n);
-            for (int i = (k / s) * p / s; i < ((k / s) + 1) * p / s; i++)
-                for (int j = (k % s) * p / s; j < ((k % s) + 1) * p / s; j++)
-                    pix[i,j] = c;
+            
+
+
+            /*switch (c)
+            {
+                case 1:
+                    newColor = Color.FromArgb(0, 250, 0);
+                    for (int i = (k / s) * p / s; i < ((k / s) + 1) * p / s; i++)
+                        for (int j = (k % s) * p / s; j < ((k % s) + 1) * p / s; j++)
+                            pix[i, j] = newColor;
+                    break;
+                case 2:
+                    newColor = Color.FromArgb(250, 0, 0);
+                    for (int i = (k / s) * p / s; i < ((k / s) + 1) * p / s; i++)
+                        for (int j = (k % s) * p / s; j < ((k % s) + 1) * p / s; j++)
+                            pix[i, j] = newColor;
+                    break;
+                case 3:
+                    newColor = Color.FromArgb(0, 0, 250);
+                    for (int i = (k / s) * p / s; i < ((k / s) + 1) * p / s; i++)
+                        for (int j = (k % s) * p / s; j < ((k % s) + 1) * p / s; j++)
+                            pix[i, j] = newColor;
+                    break;
+                default:
+                    newColor = Color.FromArgb(0, 0, 0);
+                    for (int i = (k / s) * p / s; i < ((k / s) + 1) * p / s; i++)
+                        for (int j = (k % s) * p / s; j < ((k % s) + 1) * p / s; j++)
+                            pix[i, j] = newColor;
+                    break;
+            }*/
+            
 
 
         }
@@ -291,52 +365,41 @@ namespace WindowsFormsApp1
             Bitmap bmp = (Bitmap)pictureBox2.Image;//создаём объект битмапа для записи в него чёрнобелого изображения
             int M = bmp.Height;
             int N = bmp.Width;
-            double[,] a = new double[M, N];
+            Color[,] color = new Color[bmp.Width, bmp.Height];
+            for (int x = 0; x < bmp.Height; x++)
+                for (int y = 0; y < bmp.Width; y++)
+                {
+                    color[x, y] = bmp.GetPixel(y, x);
+                }
+            /*double[,] a = new double[M, N];
             for (int y = 0; y < N; y++)
                 for (int x = 0; x < M; x++)
                 {
                     a[x, y] = bmp.GetPixel(y, x).R;
-                }
+                }*/
 
-           /* double[] koef = new double[2];
-            koef = Kf(a);//получение коэффициентов образа
+            /* double[] koef = new double[2];
+             koef = Kf(a);//получение коэффициентов образа
 
-            using (StreamWriter svdfile = new StreamWriter(@"ftest.txt", append: true))
-            {
-                // svdfile.Write(i);
-                svdfile.Write("a0 = ");
-                svdfile.Write(koef[0]);
-                svdfile.Write(" b0 = ");
-                svdfile.Write("lugkjgjhgjhgmjgmjghjjgjh");
-                svdfile.WriteLine();
-            };*/
+             using (StreamWriter svdfile = new StreamWriter(@"ftest.txt", append: true))
+             {
+                 // svdfile.Write(i);
+                 svdfile.Write("a0 = ");
+                 svdfile.Write(koef[0]);
+                 svdfile.Write(" b0 = ");
+                 svdfile.Write("lugkjgjhgjhgmjgmjghjjgjh");
+                 svdfile.WriteLine();
+             };*/
             textBox1.Text = (0 % 2).ToString();
-            Identification(a);
+            Identification(color);
             textBox1.Text = "end id";
             Bitmap image1 = new Bitmap(bmp.Height, bmp.Width);
-            Color newColor;
             // Loop through the images pixels to reset color.
-            for (int x = 0; x < image1.Width; x++)
+            for (int x = 0; x < image1.Height; x++)
             {
-                for (int y = 0; y < image1.Height; y++)
-                {
-                    switch (a[x,y])
-                    {
-                        case 1:
-                             newColor = Color.FromArgb(0, 250, 0);
-                            break;
-                        case 2:
-                             newColor = Color.FromArgb(250, 0, 0);
-                            break;
-                        case 3:
-                             newColor = Color.FromArgb(0, 0,250);
-                            break;
-                        default:
-                            newColor = Color.FromArgb(0, 0, 0);
-                            break;
-                    }
-                    
-                    image1.SetPixel(x, y, newColor);
+                for (int y = 0; y < image1.Width; y++)
+                { 
+                    image1.SetPixel(x, y, color[x,y]);
                 }
             }
 
@@ -394,5 +457,9 @@ namespace WindowsFormsApp1
 
         }
 
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
