@@ -18,7 +18,7 @@ namespace WindowsFormsApp1
 
     public partial class CR : Form
     {
-        double[] forest1 = { 1, 0, 1, 0 };
+        double[,] forest1 = { { 0.7, 0.9, 0.36, 0.4 },{0.7,1.1,0.4,0.8 },{ 0.7,0.9,0.35,0.5} };
         double[] city2 = { -25.0088, -23, 3300, 839.4985, 933.3491 };
         double[] river3 = { -2.2365, -1.0706, 29.2263, 65.0149 };
         public CR()
@@ -206,11 +206,14 @@ namespace WindowsFormsApp1
 
 
 
-            if ((n == 5) && (k == 0 || k == 1 || k == 63))
-            {
+           // if ((n == 5) && (k == 787 || k == 818 || k == 819))
+            {/*
                 using (StreamWriter svdfile = new StreamWriter(@"ftest.txt", append: true))
                 {
-                   /* // svdfile.Write(i);
+                    // svdfile.Write(i);
+                    svdfile.Write(" k = ");
+                    svdfile.Write(k);
+                    svdfile.WriteLine();
                     svdfile.Write("a0R = ");
                     svdfile.Write(arr[0,0]);
                     svdfile.Write(" b0R = ");
@@ -229,19 +232,16 @@ namespace WindowsFormsApp1
                     svdfile.Write(arr[2, 1]);
                     svdfile.WriteLine();
 
-                    svdfile.Write(" n = ");
-                    svdfile.Write(p/s);
-                    svdfile.WriteLine();*/
+                    
+                    svdfile.WriteLine();
                     Color newColor = Color.FromArgb(0, 0, 0);
                     int i1 = (k / s) * p / s;
                     int i2 = ((k / s) + 1) * p / s;
                     int j1 = (k % s) * p / s;
                     int j2 = ((k % s) + 1) * p / s;
 
-                    for (int i = (k / s) * p / s; i < ((k / s) + 1) * p / s; i++)
-                        for (int j = (k % s) * p / s; j < ((k % s) + 1) * p / s; j++)
-                            pix[i, j] = newColor;
-                    /* for (int j = (k % s) * p / s; j < ((k % s) + 1) * p / s; j++)
+                    
+                     for (int j = (k % s) * p / s; j < ((k % s) + 1) * p / s; j++)
                      {
 
                          pix[i1, j] = newColor;
@@ -258,19 +258,9 @@ namespace WindowsFormsApp1
                      for (int j = (k % s) * p / s; j < ((k % s) + 1) * p / s; j++)
                      {
                          pix[i2, j] = newColor;
-                         pix[i1 + 1, j] = newColor;
-                     }*/
-
-                    /* for (int i = 0; i < p ; i++)
-                     {
-                         for (int j = 0; j < p ; j++)
-                         {
-                             svdfile.Write(" ");
-                             svdfile.Write(pix[i, j]);
-                         }
-                         svdfile.WriteLine();
-                     }*/
-                };
+                         pix[i2 -1, j] = newColor;
+                     }
+                };*/
             }
             
             return arr;
@@ -303,9 +293,11 @@ namespace WindowsFormsApp1
         public int Eq(double[,] kf)
         {
             int n=0;
-           /* if (kf[0] == 0 && kf[1] == 0)
-                n = 1;*/
-            if ((kf[0,0] >= forest1[0]) && (kf[0,0] <= forest1[1]) && (kf[0,1] >= forest1[2]) && (kf[0,1] <= forest1[3]))
+            /* if (kf[0] == 0 && kf[1] == 0)
+                 n = 1;*/
+            if ((kf[0, 0] >= forest1[0, 0]) && (kf[0, 0] <= forest1[0, 1]) && (kf[0, 1] >= forest1[0, 2]) && (kf[0, 1] <= forest1[0, 3])&&
+                (kf[1, 0] >= forest1[1, 0]) && (kf[1, 0] <= forest1[1, 1]) && (kf[1, 1] >= forest1[1, 2]) && (kf[1, 1] <= forest1[1, 3])&&
+                (kf[2, 0] >= forest1[2, 0]) && (kf[2, 0] <= forest1[2, 1]) && (kf[2, 1] >= forest1[2, 2]) && (kf[2, 1] <= forest1[2, 3]))
                 n = 1;
             else if ((kf[1,0] >= city2[0]) && (kf[1,0] <= city2[1]) && (kf[1,1] >= city2[2]) && (kf[1,1] <= city2[3]))
                 n=2;
@@ -325,10 +317,10 @@ namespace WindowsFormsApp1
                 k = k - (int)System.Math.Pow(4, n);
                 n++;
             }
-            
+            int s = (int)System.Math.Pow(2, n);
 
 
-            /*switch (c)
+            switch (c)
             {
                 case 1:
                     newColor = Color.FromArgb(0, 250, 0);
@@ -354,7 +346,7 @@ namespace WindowsFormsApp1
                         for (int j = (k % s) * p / s; j < ((k % s) + 1) * p / s; j++)
                             pix[i, j] = newColor;
                     break;
-            }*/
+            }
             
 
 
@@ -369,28 +361,27 @@ namespace WindowsFormsApp1
             for (int x = 0; x < bmp.Height; x++)
                 for (int y = 0; y < bmp.Width; y++)
                 {
-                    color[x, y] = bmp.GetPixel(y, x);
+                    color[y, x] = bmp.GetPixel(x, y);
                 }
-            /*double[,] a = new double[M, N];
-            for (int y = 0; y < N; y++)
-                for (int x = 0; x < M; x++)
-                {
-                    a[x, y] = bmp.GetPixel(y, x).R;
-                }*/
+            
 
-            /* double[] koef = new double[2];
-             koef = Kf(a);//получение коэффициентов образа
+             
+            
 
-             using (StreamWriter svdfile = new StreamWriter(@"ftest.txt", append: true))
+             using (StreamWriter svdfile = new StreamWriter(@"futest.txt", append: true))
              {
                  // svdfile.Write(i);
-                 svdfile.Write("a0 = ");
-                 svdfile.Write(koef[0]);
-                 svdfile.Write(" b0 = ");
-                 svdfile.Write("lugkjgjhgjhgmjgmjghjjgjh");
-                 svdfile.WriteLine();
-             };*/
-            textBox1.Text = (0 % 2).ToString();
+                 svdfile.Write("0,500 ");
+                 svdfile.Write(color[0,500].R ); svdfile.Write(" ");
+                svdfile.Write(color[0, 500].G); svdfile.Write(" ");
+                svdfile.Write(color[0, 500].B); svdfile.Write(" ");
+                svdfile.Write(" 0,0 ");
+                 svdfile.Write(color[0,0].R); svdfile.Write(" ");
+                svdfile.Write(color[0, 0].G); svdfile.Write(" ");
+                svdfile.Write(color[0, 0].B); svdfile.Write(" ");
+                svdfile.WriteLine();
+             };
+           
             Identification(color);
             textBox1.Text = "end id";
             Bitmap image1 = new Bitmap(bmp.Height, bmp.Width);
@@ -399,7 +390,7 @@ namespace WindowsFormsApp1
             {
                 for (int y = 0; y < image1.Width; y++)
                 { 
-                    image1.SetPixel(x, y, color[x,y]);
+                    image1.SetPixel(x, y, color[y,x]);
                 }
             }
 
