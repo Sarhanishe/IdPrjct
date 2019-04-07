@@ -1,0 +1,1 @@
+ID,Size,Ra,Rb,Ga,Gb,Ba,Bb,Class

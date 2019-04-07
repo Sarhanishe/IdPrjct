@@ -206,8 +206,8 @@ namespace WindowsFormsApp1
 
 
 
-           // if ((n == 5) && (k == 787 || k == 818 || k == 819))
-            {/*
+            if ((n == 5) && (k == 0 || k == 2 || k == 32))
+            {
                 using (StreamWriter svdfile = new StreamWriter(@"ftest.txt", append: true))
                 {
                     // svdfile.Write(i);
@@ -260,7 +260,7 @@ namespace WindowsFormsApp1
                          pix[i2, j] = newColor;
                          pix[i2 -1, j] = newColor;
                      }
-                };*/
+                };
             }
             
             return arr;
@@ -320,7 +320,7 @@ namespace WindowsFormsApp1
             int s = (int)System.Math.Pow(2, n);
 
 
-            switch (c)
+            /*switch (c)
             {
                 case 1:
                     newColor = Color.FromArgb(0, 250, 0);
@@ -341,12 +341,12 @@ namespace WindowsFormsApp1
                             pix[i, j] = newColor;
                     break;
                 default:
-                    newColor = Color.FromArgb(0, 0, 0);
+                   /* newColor = Color.FromArgb(0, 0, 0);
                     for (int i = (k / s) * p / s; i < ((k / s) + 1) * p / s; i++)
                         for (int j = (k % s) * p / s; j < ((k % s) + 1) * p / s; j++)
                             pix[i, j] = newColor;
                     break;
-            }
+            }*/
             
 
 
