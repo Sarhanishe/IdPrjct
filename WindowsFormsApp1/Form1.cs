@@ -15,7 +15,7 @@ using MathNet.Numerics.LinearAlgebra.Double;
 
 namespace WindowsFormsApp1
 {
-
+   
     public partial class CR : Form
     {
         double[,] forest1 = { { 0.7, 0.9, 0.36, 0.4 },{0.7,1.1,0.4,0.8 },{ 0.7,0.9,0.35,0.5} };
@@ -206,39 +206,25 @@ namespace WindowsFormsApp1
 
 
 
-            if ((n == 5) && (k == 0 || k == 2 || k == 32))
+           // if ((n == 5) )
             {
-                using (StreamWriter svdfile = new StreamWriter(@"ftest.txt", append: true))
+               /* using (StreamWriter svdfile = new StreamWriter(@"test.txt", append: true))
                 {
                     // svdfile.Write(i);
-                    svdfile.Write(" k = ");
-                    svdfile.Write(k);
-                    svdfile.WriteLine();
-                    svdfile.Write("a0R = ");
-                    svdfile.Write(arr[0,0]);
-                    svdfile.Write(" b0R = ");
-                    svdfile.Write(arr[0,1]);
-                    svdfile.WriteLine();
+                    svdfile.Write(k); svdfile.Write(",");                 
+                    svdfile.Write(arr[0,0]); svdfile.Write(",");
+                    svdfile.Write(arr[0,1]); svdfile.Write(",");
 
-                    svdfile.Write("a0G = ");
-                    svdfile.Write(arr[1, 0]);
-                    svdfile.Write(" b0G = ");
-                    svdfile.Write(arr[1, 1]);
-                    svdfile.WriteLine();
+                    svdfile.Write(arr[1, 0]); svdfile.Write(",");
+                    svdfile.Write(arr[1, 1]); svdfile.Write(",");
 
-                    svdfile.Write("a0B = ");
-                    svdfile.Write(arr[2, 0]);
-                    svdfile.Write(" b0B = ");
-                    svdfile.Write(arr[2, 1]);
-                    svdfile.WriteLine();
-
-                    
-                    svdfile.WriteLine();
+                    svdfile.Write(arr[2, 0]); svdfile.Write(",");
+                    svdfile.Write(arr[2, 1]); svdfile.WriteLine();
                     Color newColor = Color.FromArgb(0, 0, 0);
                     int i1 = (k / s) * p / s;
-                    int i2 = ((k / s) + 1) * p / s;
+                    int i2 = ((k / s) + 1) * p / s-1;
                     int j1 = (k % s) * p / s;
-                    int j2 = ((k % s) + 1) * p / s;
+                    int j2 = ((k % s) + 1) * p / s-1;
 
                     
                      for (int j = (k % s) * p / s; j < ((k % s) + 1) * p / s; j++)
@@ -260,7 +246,7 @@ namespace WindowsFormsApp1
                          pix[i2, j] = newColor;
                          pix[i2 -1, j] = newColor;
                      }
-                };
+                };*/
             }
             
             return arr;
@@ -351,9 +337,51 @@ namespace WindowsFormsApp1
 
 
         }
+        //Закрашивание через файл
+        public void Pnt16(Color[,] pix, int k, int c)
+        {
+            int p = pix.GetLength(1);
+            int n = 5;
+            Color newColor = Color.FromArgb(0, 0, 0);
+           
+            int s = (int)System.Math.Pow(2, n);
+
+
+            switch (c)
+            {
+                case 0:
+                    newColor = Color.FromArgb(0, 250, 0);
+                    for (int i = (k / s) * p / s; i < ((k / s) + 1) * p / s; i++)
+                        for (int j = (k % s) * p / s; j < ((k % s) + 1) * p / s; j++)
+                            pix[i, j] = newColor;
+                    break;
+                case 1:
+                    newColor = Color.FromArgb(250, 0, 0);
+                    for (int i = (k / s) * p / s; i < ((k / s) + 1) * p / s; i++)
+                        for (int j = (k % s) * p / s; j < ((k % s) + 1) * p / s; j++)
+                            pix[i, j] = newColor;
+                    break;
+                case 2:
+                    newColor = Color.FromArgb(0, 0, 250);
+                    for (int i = (k / s) * p / s; i < ((k / s) + 1) * p / s; i++)
+                        for (int j = (k % s) * p / s; j < ((k % s) + 1) * p / s; j++)
+                            pix[i, j] = newColor;
+                    break;
+                default:
+                    /*newColor = Color.FromArgb(0, 0, 0);
+                    for (int i = (k / s) * p / s; i < ((k / s) + 1) * p / s; i++)
+                        for (int j = (k % s) * p / s; j < ((k % s) + 1) * p / s; j++)
+                            pix[i, j] = newColor;*/
+                    break;
+            }
+
+
+
+        }
         //Основная часть
         private void button1_Click(object sender, EventArgs e)
         {
+            System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US");
             Bitmap bmp = (Bitmap)pictureBox2.Image;//создаём объект битмапа для записи в него чёрнобелого изображения
             int M = bmp.Height;
             int N = bmp.Width;
@@ -363,26 +391,45 @@ namespace WindowsFormsApp1
                 {
                     color[y, x] = bmp.GetPixel(x, y);
                 }
-            
 
-             
-            
 
-             using (StreamWriter svdfile = new StreamWriter(@"futest.txt", append: true))
-             {
-                 // svdfile.Write(i);
-                 svdfile.Write("0,500 ");
-                 svdfile.Write(color[0,500].R ); svdfile.Write(" ");
-                svdfile.Write(color[0, 500].G); svdfile.Write(" ");
-                svdfile.Write(color[0, 500].B); svdfile.Write(" ");
-                svdfile.Write(" 0,0 ");
-                 svdfile.Write(color[0,0].R); svdfile.Write(" ");
-                svdfile.Write(color[0, 0].G); svdfile.Write(" ");
-                svdfile.Write(color[0, 0].B); svdfile.Write(" ");
-                svdfile.WriteLine();
-             };
-           
-            Identification(color);
+
+
+
+
+
+            //Identification(color);
+
+
+            string file = File.ReadAllText("prdct_knn.txt");
+            int[] buf = file
+                .Split(new char[] { ' '}, StringSplitOptions.RemoveEmptyEntries)
+                .Select(n => int.Parse(n))
+                .ToArray();
+
+
+
+            for (int i = 0; i < 1024; i++)
+                Pnt16(color, i, buf[i]);
+
+                /*using (StreamReader sr = new StreamReader("prdct.txt"))
+                {
+
+                    String line = sr.ReadToEnd();
+                    Console.WriteLine(line);
+
+                    using (StreamWriter svdfile = new StreamWriter(@"futest.txt", append: true))
+                    {
+                        svdfile.WriteLine(line);
+
+                    }
+                }*/
+                using (StreamWriter svdfile = new StreamWriter(@"futest.txt", append: true))
+            {
+                svdfile.WriteLine(buf[0]);
+
+            }
+            // Pnt16(color,i,c);
             textBox1.Text = "end id";
             Bitmap image1 = new Bitmap(bmp.Height, bmp.Width);
             // Loop through the images pixels to reset color.
