@@ -206,9 +206,15 @@ namespace WindowsFormsApp1
 
 
 
-           // if ((n == 5) )
+            if ((n == 5) &&
+                 (
+                  (k >= 0 && k < 95) || (k >= 128 && k < 133) ||
+                  (k / s >= 4 && k / s <= 8 && k % s >= 26 && k % s <= 30)||
+                  (k / s >= 29 && k / s <= 31 && k % s >= 20 && k % s <= 23)|| (k / s >= 24 && k / s <= 26 && k % s >= 17 && k % s <= 18)|| k==919||k==918||k==755||k==787||k==819
+                ) 
+              )
             {
-               /* using (StreamWriter svdfile = new StreamWriter(@"test.txt", append: true))
+                using (StreamWriter svdfile = new StreamWriter(@"futest.txt", append: true))
                 {
                     // svdfile.Write(i);
                     svdfile.Write(k); svdfile.Write(",");                 
@@ -246,7 +252,7 @@ namespace WindowsFormsApp1
                          pix[i2, j] = newColor;
                          pix[i2 -1, j] = newColor;
                      }
-                };*/
+                };
             }
             
             return arr;
@@ -398,7 +404,7 @@ namespace WindowsFormsApp1
 
 
 
-            //Identification(color);
+            Identification(color);
 
 
             string file = File.ReadAllText("prdct_knn.txt");
@@ -409,27 +415,12 @@ namespace WindowsFormsApp1
 
 
 
-            for (int i = 0; i < 1024; i++)
-                Pnt16(color, i, buf[i]);
+           /* for (int i = 0; i < 1024; i++)
+                Pnt16(color, i, buf[i]);*/
 
-                /*using (StreamReader sr = new StreamReader("prdct.txt"))
-                {
-
-                    String line = sr.ReadToEnd();
-                    Console.WriteLine(line);
-
-                    using (StreamWriter svdfile = new StreamWriter(@"futest.txt", append: true))
-                    {
-                        svdfile.WriteLine(line);
-
-                    }
-                }*/
-                using (StreamWriter svdfile = new StreamWriter(@"futest.txt", append: true))
-            {
-                svdfile.WriteLine(buf[0]);
-
-            }
-            // Pnt16(color,i,c);
+                
+               
+           
             textBox1.Text = "end id";
             Bitmap image1 = new Bitmap(bmp.Height, bmp.Width);
             // Loop through the images pixels to reset color.
