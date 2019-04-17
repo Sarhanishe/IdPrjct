@@ -404,10 +404,10 @@ namespace WindowsFormsApp1
 
 
 
-            Identification(color);
+            //Identification(color);
 
 
-            string file = File.ReadAllText("prdct_knn.txt");
+            string file = File.ReadAllText("prdct_knn_true.txt");
             int[] buf = file
                 .Split(new char[] { ' '}, StringSplitOptions.RemoveEmptyEntries)
                 .Select(n => int.Parse(n))
@@ -415,8 +415,8 @@ namespace WindowsFormsApp1
 
 
 
-           /* for (int i = 0; i < 1024; i++)
-                Pnt16(color, i, buf[i]);*/
+            for (int i = 0; i < 1024; i++)
+                Pnt16(color, i, buf[i]);
 
                 
                
